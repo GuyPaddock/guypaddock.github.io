@@ -1,7 +1,7 @@
 # Site wide configuration
 
-title: "My Site"
-description: "This is a description of my awesome site."
+title: "Guy Elsmore-Paddock's Blog"
+description: "Developer-focused blog about Java, Spring, Drupal, and Ruby on Rails."
 logo: # 120x120 px default image used for Twitter summary card
 teaser: # 400x250 px default teaser image used in image archive grid
 locale: en
@@ -26,14 +26,14 @@ gems:
 
 # Site owner
 owner:
-  name:
-  email:
-  twitter:
+  name: Guy Elsmore-Paddock
+  email: guy@rosieapp.com
+  twitter: GuyPaddock
   google:
     ad-client:
     ad-slot:
   bio:
-  avatar: bio-photo.jpg # 160x160 px image for author byline
+  avatar: https://avatars2.githubusercontent.com/u/2631799?v=3&u=770195d6be63d976892d25350eec054cd3032722&s=400 # 160x160 px image for author byline
   disqus-shortname:
 
 
