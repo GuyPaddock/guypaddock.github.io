@@ -497,6 +497,7 @@ dependencies {
     compile "org.aspectj:aspectjrt:$aspectjVersion"
     compile "org.aspectj:aspectjweaver:$aspectjVersion"
     ajc "org.aspectj:aspectjtools:$aspectjVersion"
+}
 ```
 
 This allows us to control what version of AspectJ we're pulling in, just by changing the `aspectJVersion` constant. It also makes the AspectJ runtime and weaver available when we're compiling our project, and stashes away references to the JARs containing the AspectJ tools in our `ajc` configuration, which we declared earlier.
