@@ -2,8 +2,8 @@
 
 title: "Guy Elsmore-Paddock's Blog"
 description: "Developer-focused blog about Java, Spring, Drupal, and Ruby on Rails."
-logo: # 120x120 px default image used for Twitter summary card
-teaser: # 400x250 px default teaser image used in image archive grid
+logo: 120x120-logo.png # 120x120 px default image used for Twitter summary card
+teaser: 400x250-teaser-default.png # 400x250 px default teaser image used in image archive grid
 locale: en
 url:
 feed:
@@ -33,7 +33,7 @@ owner:
     ad-client:
     ad-slot:
   bio:
-  avatar: https://avatars2.githubusercontent.com/u/2631799?v=3&u=770195d6be63d976892d25350eec054cd3032722&s=400 # 160x160 px image for author byline
+  avatar: 160x160-avatar.png # 160x160 px image for author byline
   disqus-shortname:
 
 
