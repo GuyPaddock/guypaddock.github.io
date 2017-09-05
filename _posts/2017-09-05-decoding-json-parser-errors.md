@@ -22,7 +22,7 @@ Rescued MapQuest API `JSON::ParserError`. Error:
 822: unexpected token at 'You have exceeded the number of monthly transactions included with your current plan. If you need additional transactions, please consider upgrading to a plan that offers additional transactions. If you would like to talk to an Account Manager about Enterprise Edition licensing options, please contact sales@mapquest.com.'
 ```
 
-Notice the difference? The only difference was that after the upgrade we were now getting 822 instead of 795 at the start of the message. But... what does 795 / 822 actually represent? An error code? The length of the response? The line number in the source JSON? The line number in Ruby? There didn't seem to be any obvious answer -- especially because the error is the same length and much shorter than 822 characters.
+Notice the difference? After the upgrade we were now getting `822` instead of `795` at the start of the message. But... what does `795` / `822` actually represent? An error code? The length of the response? The line number in the source JSON? The line number in Ruby? There didn't seem to be any obvious answer -- especially because no matter which version of JSON we're using, the error _message_ is the same length. Either way, the message itself is much shorter than 822 characters.
 
 I also checked the stack for the test-induced exception, to no avail:
 ```
@@ -44,7 +44,7 @@ Certainly, no 822 showing up there.
 
 The [docs for JSON::ParserError](https://ruby-doc.org/stdlib-1.9.3/libdoc/json/rdoc/JSON/ParserError.html) were similarly useless. Beyond a one-sentence description, no detail on what numbers in the message, if any, should mean.
 
-As it turns out, the answer lies in C code within the [JSON gem](https://github.com/flori/json). I checked out the project at tag `1.8.6` and started my search there. _(As an aside: WTF happened with this gem that they needed to skip version 1.8.4? They went from 1.8.3 to 1.8.5 and all the release notes say is that they skipped it, but... WHY?)._
+With nowhere else to turn, I figured that the answer must lie within the [JSON gem](https://github.com/flori/json). I checked out the project at tag `1.8.6` and started my search there. _(As an aside: WTF happened with this gem that they needed to skip version 1.8.4? They went from 1.8.3 to 1.8.5 and all the release notes say is that they skipped it, but... WHY?)._
 
 Grepping through the project using `grep -R ": unexpected token at" -n .` I got:
 ```
@@ -62,9 +62,9 @@ Grepping through the project using `grep -R ": unexpected token at" -n .` I got:
 ./ext/json/ext/parser/parser.rl:822:        rb_enc_raise(EXC_ENCODING eParserError, "%u: unexpected token at '%s'", __LINE__, p);
 ```
 
-There it is! It turns out that the number in the exception represents a line number in the `.rl` file that is pre-processed by [Ragel(http://www.colm.net/open-source/ragel/) to generate the actual JSON parser in C. The number indicates which line in the parser had an issue with the code!
+There it is! It turns out that the number in the exception represents a line number in the `.rl` file that is pre-processed by [Ragel](http://www.colm.net/open-source/ragel/) to generate the actual JSON parser in C. The number indicates which line in the parser had an issue with the code!
 
-To confirm, if I roll back the gem to 1.8.3 and run the same query, I get:
+To confirm, if I roll back the gem to `1.8.3` and run the same query, I get:
 ```
 ./ext/json/ext/parser/parser.c:533:                rb_raise(eParserError, "%u: unexpected token at '%s'", __LINE__, p);
 ./ext/json/ext/parser/parser.c:569:            rb_raise(eParserError, "%u: unexpected token at '%s'", __LINE__, p - 8);
@@ -81,4 +81,5 @@ To confirm, if I roll back the gem to 1.8.3 and run the same query, I get:
 ```
 
 And, there we have it -- `795` -- just like we had in our original exception message. So, it's a line number... in Ragel code.
-![The More You Know](https://giphy.com/gifs/star-shooting-the-more-you-know-3og0IMJcSI8p6hYQXS)
+
+![The More You Know](https://media.giphy.com/media/3og0IMJcSI8p6hYQXS/giphy.gif)
