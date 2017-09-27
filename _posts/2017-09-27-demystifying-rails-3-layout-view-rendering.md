@@ -1,6 +1,6 @@
 ---
 layout: article
-title: "Demystifying Rails 3.x Template Rendering"
+title: "Demystifying Rails 3.x Layout/View Rendering"
 categories: posts
 modified: 2017-09-27T14:00:00-04:00
 tags: [ruby, templates, erb, rails3, ruby on rails]
