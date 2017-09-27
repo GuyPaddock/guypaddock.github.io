@@ -23,7 +23,7 @@ First, let me start with the questions we were recently asking here that prompte
 ## Answers
 All right, now the answers:
 
-1. _When a controller inherits from `ActionController::Base` instead of `ApplicationController`, Rails looks for its template under `views` (e.g. `views/awesome_sauce/my_orders/new.html.erb`), but if the controller inherits from `ApplicationController` this does not happen (i.e. it always uses `views/layouts/application.html.erb`). Why?_
+### 1. When a controller inherits from `ActionController::Base` instead of `ApplicationController`, Rails looks for its template under `views` (e.g. `views/awesome_sauce/my_orders/new.html.erb`), but if the controller inherits from `ApplicationController` this does not happen (i.e. it always uses `views/layouts/application.html.erb`). Why?
 
 The answer is related to the fact that there are actually two distinct concepts here in Rails that are often conflated &ndash; _views_ and _layouts_. Even [the Rails guides](http://guides.rubyonrails.org/v3.2/layouts_and_rendering.html#finding-layouts) seem to group these together as once concept &ndash; "views" &ndash; but they're actually separate things that Rails handles differently.
 
@@ -42,14 +42,14 @@ Rails determines the name of the _layout_ to search for by taking the controller
 5. If it does not find a template for the current controller, it repeats steps 1-5 for each of the ancestors of the current controller.
 
 Now, to actually answer the question:
-- *If a controller inherits from `ApplicationController`:* per the algorithm above, Rails will look for a layout under `views/layouts/application.html.erb` since that's the name of the current controller's parent. If it finds a file with that name, it renders the view for the controller action in the content area of that layout.
-- *If a controller inherits from `ActionController::Base`:* the algorithm above will fail to find a layout, so Rails will render the view "bare" / "raw" &nbdash; without a layout. So, if the content of the view is a full HTML page, that's what gets rendered. That's why it seems strange when you change base classes that the HTML page rendered changes.
+- **If a controller inherits from `ApplicationController`:** per the algorithm above, Rails will look for a layout under `views/layouts/application.html.erb` since that's the name of the current controller's parent. If it finds a file with that name, it renders the view for the controller action in the content area of that layout.
+- **If a controller inherits from `ActionController::Base`:** the algorithm above will fail to find a layout, so Rails will render the view "bare" / "raw" &nbdash; without a layout. So, if the content of the view is a full HTML page, that's what gets rendered. That's why it seems strange when you change base classes that the HTML page rendered changes.
 
-2. _If a controller inherits from `Devise::SessionsController`, Rails tries to find a layout called `views/layout/devise/sessions_controller.html.erb`, and then ends up using `views/layout/application.html.erb`, even when there is a template for the current controller action `views/my_controller/action_name.html.erb` (where `action_name` is something like `new`, `show`, etc). Why?_
+### 2. If a controller inherits from `Devise::SessionsController`, Rails tries to find a layout called `views/layout/devise/sessions_controller.html.erb`, and then ends up using `views/layout/application.html.erb`, even when there is a template for the current controller action `views/my_controller/action_name.html.erb` (where `action_name` is something like `new`, `show`, etc). Why?
 
 All of Devise's controllers inherit from `DeviseController`, which has a _dynamic parent class_ specified by `Devise.parent_controller`. By default, the parent controller Devise uses is [`ApplicationController`](https://github.com/plataformatec/devise/blob/v2.2/lib/devise.rb#L205) unless you change that in your application configuration. So, if you combine that knowledge with the answer from step #1, that's why devise controllers will tend to use the `application.html.erb` file if there is no `devise/sessions_controller.html.erb` layout.
 
-3. _How does Rails determine what layout to use when several parent controllers have layouts that match their names? Are they nested?_
+### 3. How does Rails determine what layout to use when several parent controllers have layouts that match their names? Are they nested?
 
 They are not nested -- they replace one another. Rails injects an internal method called `_layout` into each controller that looks something like this:
 
