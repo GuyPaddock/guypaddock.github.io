@@ -29,8 +29,8 @@ The answer is related to the fact that there are actually two distinct concepts 
 
 Here's how the two things are different:
 - **views** provide the content to display for a specific controller action. This content may be:
--- Rendered inside a layout. In this case, the content of the view should not be a full HTML page, but just enough HTML to fill out a content area of the larger page; or
--- Rendered stand-alone, without a layout. In this case, the content of the view must be a full HTML page, complete with the `<html>` tag, headers, body, etc.
+  - Rendered inside a layout. In this case, the content of the view should not be a full HTML page, but just enough HTML to fill out a content area of the larger page; or
+  - Rendered stand-alone, without a layout. In this case, the content of the view must be a full HTML page, complete with the `<html>` tag, headers, body, etc.
 - **layouts** provide the skeleton / boilerplate content of the HTML page into which a view is rendered. If a layout is available for a given controller, or its parents, Rails will render the view for the controller action into the layout whereever the layout calls `yield`.
 
 Rails determines the name of the _layout_ to search for by taking the controller name as follows _(the steps might actually be ordered differently inside Rails ActionPack, but these are the steps Rails effectively does)_:
