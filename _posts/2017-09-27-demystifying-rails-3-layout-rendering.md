@@ -7,9 +7,9 @@ tags: [ruby, templates, erb, rails3, ruby on rails]
 comments: true
 ads: false
 ---
-Now that Rails 5.x is out, I know that it's very rare for anyone to still be talking about Rails 3.x. But, for those poor souls (like us) who still are maintaining system written with that version of the framework, I wanted to share some knowledge I've pieced together that did not appear elsewhere on the web.
+Now that Rails 5.x is out, I know that it's very rare for anyone to still be talking about Rails 3.x. But, for those poor souls (like us) who still are maintaining systems written with that version of the framework, I wanted to share some knowledge I've pieced together that did not appear elsewhere on the web.
 
-_(If you're running Rails 4.x, this topic is covered in nauseating detail here: http://climber2002.github.io/blog/2015/02/21/how-rails-finds-your-templates-part-1/)_
+_(If you're running Rails 4.x, this topic is covered in nauseating detail by a three-part blog post from [AprilTouch](http://climber2002.github.io/blog/2015/02/21/how-rails-finds-your-templates-part-1/))_
 
 ## Questions
 First, let me start with the questions we were recently asking here that prompted this research:
@@ -18,7 +18,7 @@ First, let me start with the questions we were recently asking here that prompte
 
 1. If a controller inherits from `Devise::SessionsController`, Rails tries to find a layout called `views/layout/devise/sessions_controller.html.erb`, and then ends up using `views/layout/application.html.erb`, even when there is a template for the current controller action `views/my_controller/action_name.html.erb` (where `action_name` is something like `new`, `show`, etc). Why?
 
-1. How does rails determine what layout to use when several parent controllers have layouts that match their names? Are they nested?
+1. How does Rails determine what layout to use when several parent controllers have layouts that match their names? Are they nested?
 
 ## Answers
 All right, now the answers:
@@ -49,9 +49,9 @@ Now, to actually answer the question:
 
 All of Devise's controllers inherit from `DeviseController`, which has a _dynamic parent class_ specified by `Devise.parent_controller`. By default, the parent controller Devise uses is [`ApplicationController`](https://github.com/plataformatec/devise/blob/v2.2/lib/devise.rb#L205) unless you change that in your application configuration. So, if you combine that knowledge with the answer from step #1, that's why devise controllers will tend to use the `application.html.erb` file if there is no `devise/sessions_controller.html.erb` layout.
 
-3. _How does rails determine what layout to use when several parent controllers have layouts that match their names? Are they nested?_
+3. _How does Rails determine what layout to use when several parent controllers have layouts that match their names? Are they nested?_
 
-They are not nested -- they are replaced. Rails injects an internal method called `_layout` into each controller that looks something like this:
+They are not nested -- they replace one another. Rails injects an internal method called `_layout` into each controller that looks something like this:
 
 ```Ruby
 def _layout
@@ -60,7 +60,7 @@ end
 ```
 (For conditional layouts, the definition looks a bit different; I haven't yet figured out how to interpret [the code that handles them](https://github.com/rails/rails/blob/3-2-stable/actionpack/lib/abstract_controller/layouts.rb#L274)).
 
-This means that it starts at the current controller and navigates up. As soon as it encounters a controller in the hierarchy for which there is a layout, it stops looking for another one. If it doesn't find a layout in the hierarchy, per my answer to question #1, it renders the view for the controller action without wrapping it in a layout.
+This means that it starts at the current controller and navigates up. As soon as it encounters a controller in the hierarchy for which there is a layout, it stops looking for another one. If it doesn't find any layout for controllers in the ancestor hierarchy, per my answer to question #1, it renders the view for the controller action without wrapping it in a layout.
 
 ## Conclusion
 I hope this is helpful to someone! I know we certainly spent a few days trying to understand why our controllers weren't behaving the way we expected when we changed their parent classes a bit.
