@@ -43,7 +43,7 @@ Rails determines the name of the _layout_ to search for by taking the controller
 
 Now, to actually answer the question:
 - **If a controller inherits from `ApplicationController`:** per the algorithm above, Rails will look for a layout under `views/layouts/application.html.erb` since that's the name of the current controller's parent. If it finds a file with that name, it renders the view for the controller action in the content area of that layout.
-- **If a controller inherits from `ActionController::Base`:** the algorithm above will fail to find a layout, so Rails will render the view "bare" / "raw" &nbdash; without a layout. So, if the content of the view is a full HTML page, that's what gets rendered. That's why it seems strange when you change base classes that the HTML page rendered changes.
+- **If a controller inherits from `ActionController::Base`:** the algorithm above will fail to find a layout, so Rails will render the view "bare" / "raw" &ndash; without a layout. So, if the content of the view is a full HTML page, that's what gets rendered. That's why it seems strange when you change base classes that the HTML page rendered changes.
 
 ### 2. If a controller inherits from `Devise::SessionsController`, Rails tries to find a layout called `views/layout/devise/sessions_controller.html.erb`, and then ends up using `views/layout/application.html.erb`, even when there is a template for the current controller action `views/my_controller/action_name.html.erb` (where `action_name` is something like `new`, `show`, etc). Why?
 
