@@ -10,7 +10,7 @@ ads: false
 Time for yet another Rails 3.x-themed post! My typical note applies -- now that Rails 5.x is out, I know that it's very rare for anyone to still be talking about Rails 3.x. But, for those poor souls (like us) who still are maintaining systems written with that version of the framework, I wanted to share some knowledge I've pieced together that did not appear elsewhere on the web.
 
 ## The Problem
-In our application, we wanted each Rails log line to print out the ID of the user who was logged-in at the time he or she made their request. Here's what we added in our `application.rb` to do this:
+In our application, we wanted each Rails log line to print out the ID of the user who was logged-in at the time he or she made his or her request. Here's what we added in our `application.rb` to do this:
 
 ```Ruby
 config.log_tags = [
