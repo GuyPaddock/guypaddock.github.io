@@ -27,7 +27,7 @@ config.log_tags = [
 Unfortunately, this just lead to every log line indicating the user as `Anonym`. After some research, we discovered it was a combination of the fact that we use cookie-based sessions and the fact that the default Rails middleware stack configures Rack with `Rails::Rack::Logger` before `ActionDispatch::Session::CookieStore`. In order for the logger to have access to the user information, it needs to come _after_ `CookieStore`.
 
 ## What the Docs Say
-Ideally, what we wanted to do was simply move the existing `Logger` middleware instance further down in the stack, below the instance for `CookieStore. The docs gave us hope that this would be pretty straightforward.
+Ideally, what we wanted to do was simply move the existing instance of the `Logger` middleware further down in the stack, below the instance for `CookieStore`. The docs gave us hope that this would be pretty straightforward.
 
 The [Ruby on Rails Guide for 3.2](http://guides.rubyonrails.org/v3.2/rails_on_rack.html) says:
 > The middleware stack behaves just like a normal `Array`. You can use any `Array` methods to insert, reorder, or remove items from the stack.
