@@ -191,7 +191,7 @@ Size after add: 57
 As it turns out, it looks like [this is expected behavior](https://github.com/google/guava/issues/2442). Indeed, Google included this easy-to-miss blurb in the docs (presumably in response to #2442):
 > If your cache should not grow beyond a certain size, just use CacheBuilder.maximumSize(long). The cache will try to evict entries that haven't been used recently or very often. _Warning:_ the cache may evict entries before this limit is exceeded -- typically when the cache size is approaching the limit.
 
-_-- From [_Caches Explained_](https://github.com/google/guava/wiki/CachesExplained#size-based-eviction)_
+&ndash; From _[Caches Explained](https://github.com/google/guava/wiki/CachesExplained#size-based-eviction)_
 
 If you step through the code, you'll find out that when using a maximum size of 32 with this particular cache configuration, the cache is split into two segments that each have a maximum length of 16 items. Depending upon which segment each new value falls into (by hash), the oldest item in that segment gets expired. It appears that a cache can have anywhere from 1 to 16 segments, and from what I can tell it seems like each segment is usually a power of 2 (from the code it appears that there's interplay with the concurrency level as well). So, you likely wouldn't see behavior unless your segments are close to multiples of 32.
 
