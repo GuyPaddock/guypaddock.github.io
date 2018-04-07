@@ -120,6 +120,7 @@ Nope, not off-by-one here...
 
 Then, things get even stranger if you crank the maximum size of the cache up to 64 (and the loop to 65 elements):
 ```
+... skipping ahead ...
 Adding: 50
 Values after add: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50]
 Size after add: 50
@@ -185,12 +186,12 @@ Values after add: [3, 4, 7, 8, 11, 12, 13, 14, 17, 18, 19, 20, 21, 22, 23, 24, 2
 Size after add: 57
 ```
 
-Now we're off by 8!
+*Now we're off by 8!*
 
 As it turns out, it looks like [this is expected behavior](https://github.com/google/guava/issues/2442). Indeed, Google included this easy-to-miss blurb in the docs (presumably in response to #2442):
 > If your cache should not grow beyond a certain size, just use CacheBuilder.maximumSize(long). The cache will try to evict entries that haven't been used recently or very often. _Warning:_ the cache may evict entries before this limit is exceeded -- typically when the cache size is approaching the limit.
 
--- From [_Caches Explained_](https://github.com/google/guava/wiki/CachesExplained#size-based-eviction)
+_-- From [_Caches Explained_](https://github.com/google/guava/wiki/CachesExplained#size-based-eviction)_
 
 If you step through the code, you'll find out that when using a maximum size of 32 with this particular cache configuration, the cache is split into two segments that each have a maximum length of 16 items. Depending upon which segment each new value falls into (by hash), the oldest item in that segment gets expired. It appears that a cache can have anywhere from 1 to 16 segments, and from what I can tell it seems like each segment is usually a power of 2 (from the code it appears that there's interplay with the concurrency level as well). So, you likely wouldn't see behavior unless your segments are close to multiples of 32.
 
