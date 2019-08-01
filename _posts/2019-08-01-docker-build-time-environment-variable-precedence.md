@@ -1,6 +1,6 @@
 ---
 layout: article
-title: "Docker Build-time Environment Variable Precedence in Muli-stage Builds"
+title: "Docker Build-time Environment Variable Precedence in Multi-stage Builds"
 categories: posts
 modified: 2019-08-01T11:15:00-04:00
 tags: [docker, gotchas, environment-variables, multi-stage-builds, drupal, drush]
