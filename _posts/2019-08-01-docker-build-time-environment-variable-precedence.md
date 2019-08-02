@@ -10,7 +10,7 @@ ads: false
 I just learned the hard way that the following won't work:
 - You create (or derive from) a Docker base image that defines a default value for an environment variable.
 - You have a multi-stage build.
-- You need to overried the environment variable of the base image during the build of the child image.
+- You need to override the environment variable of the base image during the build of the child image.
 
 Instead, the only workable solution it seems is to remove the environment variable from the base image in
 order to set it at build time in your child image.
