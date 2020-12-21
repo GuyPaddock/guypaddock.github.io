@@ -2,7 +2,7 @@
 layout: article
 title: "Implementing Custom Processor for Search API 1.x on Drupal 8"
 categories: posts
-modified: 2020-12-20T20:00:00-04:00
+modified: 2020-12-20T20:10:00-04:00
 tags: [drupal, search-api, date]
 comments: true
 ads: false
@@ -51,7 +51,7 @@ permutations.
 ## The Processors
 In the end, we actually created two processors. One converts ISO 8601 dates into
 their various alternative/synonymous representations according to US and
-European standards (e.g. dates like "May 1995", "05/1995", and "05/04/1995").
+European standards (e.g. dates like `May 1995`, `05/1995`, and `05/04/1995`).
 The other converts ISO 8601 dates into their various ISO 8601 permutations 
 (`1995-05-04` becomes `1995-05-04`, `1995-05`, and `1995`).
 
@@ -63,7 +63,7 @@ for processors should still be the same on the Search API side (we wrote these
 while using Search API `8.x-1.17`).
 
 ### Processor #1 - ISO 8601 Date Synonymizer
-This processor coverts the date format our team enters into the "Asset date"
+This processor converts the date format our team enters into the "Asset date"
 field into their more common, colloquial formats used in the United States and
 Europe.
 
@@ -71,7 +71,7 @@ The code for this processor can be found below. If you want to use this code,
 you'll want to
 [create a new custom module](https://www.drupal.org/docs/creating-custom-modules)
 and then define the processor in a file called
-"src/Plugin/search_api/processor/Iso8601DateSynonymizer.php" inside that module.
+`src/Plugin/search_api/processor/Iso8601DateSynonymizer.php` inside that module.
 
 ```php
 <?php
@@ -217,11 +217,11 @@ class Iso8601DateSynonymizer extends FieldsProcessorPluginBase {
 ```
 
 ### Processor #2 - ISO 8601 Date Tokenizer
-This processor coverts each date into the various alternate search tokens that
+This processor converts each date into the various alternate search tokens that
 should match on the date value.
 
 The code for this processor can be found below. This should go in a file called
-"src/Plugin/search_api/processor/Iso8601DateTokenizer.php" inside your custom
+`src/Plugin/search_api/processor/Iso8601DateTokenizer.php` inside your custom
 module.
 
 ```php
@@ -326,11 +326,12 @@ class Iso8601DateTokenizer extends FieldsProcessorPluginBase {
 }
 ```
 
-h2. Enabling the Processors
+## Enabling the Processors
 After creating a custom module, adding code to the appropriate files, and
 adjusting the namespace names in the files to match the name of our module,
 we are ready to test out the new processors.
 
+### Step 1: Enable Your Custom Module or Clear Caches
 Before you can set them up, you need to
 [enable your custom module](https://www.drupal.org/docs/extending-drupal/installing-modules#s-step-2-enable-the-module).
 If you added the processors to a module that was already installed (or you
@@ -338,7 +339,21 @@ later modify any of the information in the `SearchApiProcessor` annotation),
 you'll want to
 [clear caches/rebuild Drupal's registry](https://www.drupal.org/docs/user_guide/en/prevent-cache-clear.html).
 
-Then visit the "Processors" tab of your search index
+### Step 3: Configure Date Text Fields for Indexing
+Next, you will want to ensure that your date field(s) are indexed as "Fulltext
+Unstemmed" on the "Fields" tab of your search index
+(`/admin/config/search/search-api/index/YOUR_INDEX/fields`). If you index them
+as "String" values, searches won't work properly.
+
+**Also note:** these processors were written to work only with _text_ fields.
+In other words, we wrote them to handle single-value "Text" fields in our 
+Drupal entities, and the processors expect that the text will be formatted in
+ISO 8601 date format. We did not write them or test them to work with standard
+Drupal date fields nor for dates that are stored in a different format in your
+text fields. If you need this, you will need to customize the processor code.
+
+### Step 2: Enable and Configure the New Processors
+Now, visit the "Processors" tab of your search index
 (e.g. `/admin/config/search/search-api/index/YOUR_INDEX/processors`)
 and enable both the "ISO 8601 date synonymizer" and "ISO 8601 date tokenizer"
 processors. Make sure that the synonymizer runs BEFORE the tokenizer (i.e. in
@@ -347,20 +362,12 @@ should appear above the "ISO 8601 date tokenizer" in the list). Then, under
 "Processor settings", visit the vertical tab for each processor and uncheck all
 fields except your date field(s).
 
-Also note: these processors were written to work only with text fields. In other
-words, we wrote them to handle "Text" fields in our Drupal entity, and the
-processors expect that the text will be formatted like an ISO 8601 date. We did
-not write them or test them to work with standard Drupal date fields.
+### Step 4: Re-index content
+After making all these changes, remember to re-index your content.
 
-You will also want to ensure that your date field(s) are indexed as "Fulltext 
-Unstemmed" on the "Fields" tab of your search index. If you index them as
-"String" values, searches won't work properly.
-
-After making all these changes, remember to re-index your content and then try
-out a few searches.
-
-For a record containing a date like `1986-04-01`, all of the following searches
-should match it:
+### Step 5: Test!
+It's finally time to try out a few searches. For a record containing a date like
+`1986-04-01`, all of the following searches should match it:
 
 - `1986-04-01`
 - `1986-04`
