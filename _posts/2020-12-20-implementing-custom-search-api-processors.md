@@ -2,7 +2,7 @@
 layout: article
 title: "Implementing Custom Processor for Search API 1.x on Drupal 8"
 categories: posts
-modified: 2020-12-20T20:10:00-04:00
+modified: 2020-12-20T20:25:00-04:00
 tags: [drupal, search-api, date]
 comments: true
 ads: false
@@ -345,12 +345,13 @@ Unstemmed" on the "Fields" tab of your search index
 (`/admin/config/search/search-api/index/YOUR_INDEX/fields`). If you index them
 as "String" values, searches won't work properly.
 
-**Also note:** these processors were written to work only with _text_ fields.
-In other words, we wrote them to handle single-value "Text" fields in our 
-Drupal entities, and the processors expect that the text will be formatted in
-ISO 8601 date format. We did not write them or test them to work with standard
-Drupal date fields nor for dates that are stored in a different format in your
-text fields. If you need this, you will need to customize the processor code.
+**Also note:** although these processors were written to work with single-value 
+"Text" fields in ISO 8601 date format, we have tested them with standard Drupal
+date fields, and they work for those as well _as long as the index is configured
+to index the date fields as "Fulltext Unstemmed" and not "Date" values_. In our
+testing, it appears that when Search API is configured to index a Drupal date as
+text, it automatically converts the dates into ISO 8601 date strings under the
+hood.
 
 ### Step 2: Enable and Configure the New Processors
 Now, visit the "Processors" tab of your search index
